@@ -26,6 +26,7 @@ current_color = WHITE
 line = False
 rect = False
 circle = True
+erase = False
 class ButtonColor:
   def __init__(self, x, y, w, h, color):
     self.surf = pygame.Surface((w,h))
@@ -67,6 +68,7 @@ while not game_over:
   RectB = Button(255, 15, 20, 20, pygame.image.load("Images/rect.png"))
   CircB = Button(280, 15, 20, 20, pygame.image.load("Images/circle.png"))
   Save = Button(305,15,20,20,pygame.image.load("Images/save.png"))
+  Erase = Button(330,15,20,20,pygame.image.load("Images/erase.png"))
   for event in pygame.event.get():
     if event.type == pygame.QUIT:
       game_over = True
@@ -96,6 +98,16 @@ while not game_over:
       if event.type == pygame.MOUSEBUTTONUP:
         pygame.draw.ellipse(screen, current_color, [min(prev[0],cur[0]), min(prev[1],cur[1]), abs(prev[0]-cur[0]),abs(prev[1]-cur[1]) ],10)
         prev = None
+    if(erase):
+      if event.type == pygame.MOUSEBUTTONDOWN:
+        prev = pygame.mouse.get_pos()
+      if event.type == pygame.MOUSEMOTION:
+        cur = pygame.mouse.get_pos()
+        if prev:
+          pygame.draw.line(screen, WHITE, prev, cur, 50)
+          prev = cur
+      if event.type == pygame.MOUSEBUTTONUP:
+        prev = None
     Black.click(event)
     White.click(event)
     Red.click(event)
@@ -105,14 +117,17 @@ while not game_over:
     Purple.click(event)
     Color.click(event)
     if(LineB.click(event)):
-      line,rect,circle = True,False,False
+      line,rect,circle,erase = True,False,False,False
     if(RectB.click(event)):
-      line,rect,circle = False,True,False
+      line,rect,circle,erase = False,True,False,False
     if(CircB.click(event)):
-      line,rect,circle = False,False,True
+      line,rect,circle,erase = False,False,True,False
     if(Save.click(event)):
       pygame.image.save(screen,"image.png")
-  pygame.draw.rect(screen, (126,126,126), [0,0,300,30])
+    if(Erase.click(event)):
+      line,rect,circle,erase = False,False,False,True
+
+  pygame.draw.rect(screen, (126,126,126), [0,0,400,30])
   Black.update()
   White.update()
   Red.update()
@@ -125,6 +140,7 @@ while not game_over:
   RectB.update()
   CircB.update()
   Save.update()
+  Erase.update()
   # if prev:
   #   pygame.draw.circle(screen, RED, prev, 10)
   pygame.display.flip()
